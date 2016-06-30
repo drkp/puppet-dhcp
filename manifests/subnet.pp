@@ -71,11 +71,11 @@ define dhcp::subnet(
     false => 'absent',
     #false => $ensure,
   }
-  concat::fragment {"dhcp.subnet.${name}":
-    ensure  => $ensure_shared,
-    target  => "${dhcp::params::config_dir}/dhcpd.conf",
-    content => "include \"${dhcp::params::config_dir}/subnets/${name}.conf\";\n",
-  }
+#  concat::fragment {"dhcp.subnet.${name}":
+#    ensure  => $ensure_shared,
+#    target  => "${dhcp::params::config_dir}/dhcpd.conf",
+#    content => "include \"${dhcp::params::config_dir}/subnets/${name}.conf\";\n",
+#  }
 
   concat::fragment {"dhcp.subnet.${name}.hosts":
     ensure  => $ensure,
