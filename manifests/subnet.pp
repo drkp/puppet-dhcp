@@ -67,7 +67,9 @@ define dhcp::subnet(
 
   $ensure_shared = $is_shared ? {
     true  => 'absent',
-    false => $ensure,
+    # XXX DRKP: ugly hack to ensure that only shared subnets appear in the config file.
+    false => 'absent',
+    #false => $ensure,
   }
   concat::fragment {"dhcp.subnet.${name}":
     ensure  => $ensure_shared,
