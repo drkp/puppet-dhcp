@@ -65,28 +65,28 @@ define dhcp::subnet(
     notify  => Service['dhcpd'],
   }
 
-  $ensure_shared = $is_shared ? {
-    true  => 'absent',
-    # XXX DRKP: ugly hack to ensure that only shared subnets appear in the config file.
-    false => 'absent',
-    #false => $ensure,
-  }
+#  unless $is_shared {
+#    concat::fragment {"dhcp.subnet.${name}":
+#      target  => "${dhcp::params::config_dir}/dhcpd.conf",
+#      content => "include \"${dhcp::params::config_dir}/subnets/${name}.conf\";\n",
+#    }
+#  }
 #  concat::fragment {"dhcp.subnet.${name}":
 #    ensure  => $ensure_shared,
 #    target  => "${dhcp::params::config_dir}/dhcpd.conf",
 #    content => "include \"${dhcp::params::config_dir}/subnets/${name}.conf\";\n",
 #  }
 
-  concat::fragment {"dhcp.subnet.${name}.hosts":
-    ensure  => $ensure,
-    target  => "${dhcp::params::config_dir}/dhcpd.conf",
-    content => "include \"${dhcp::params::config_dir}/hosts.d/${name}.conf\";\n",
-  }
+  if $ensure == 'present' {
+    concat::fragment {"dhcp.subnet.${name}.hosts":
+      target  => "${dhcp::params::config_dir}/dhcpd.conf",
+      content => "include \"${dhcp::params::config_dir}/hosts.d/${name}.conf\";\n",
+    }
 
-  concat::fragment {"dhcp.subnet.${name}.base":
-    ensure  => $ensure,
-    target  => "${dhcp::params::config_dir}/hosts.d/${name}.conf",
-    content => "# File managed by puppet\n",
-    order   => '00',
+    concat::fragment {"dhcp.subnet.${name}.base":
+      target  => "${dhcp::params::config_dir}/hosts.d/${name}.conf",
+      content => "# File managed by puppet\n",
+      order   => '00',
+    }
   }
 }
